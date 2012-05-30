@@ -1,0 +1,6 @@
+
+[ ] Add handlers for simple operations
+
+[ ] Worry about memory leaks
+    [ ] In building the nodes and interfaces, particularly when converting
+        strings

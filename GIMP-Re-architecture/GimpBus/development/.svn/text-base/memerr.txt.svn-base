@@ -1,0 +1,30 @@
+There seems to be a memory error in GimpBus.  I think that it's been
+there awhile, but it just got noticed now.  (In particular, I think it
+gets identified when I allocate lots of stuff.)
+
+It turns out that compiling with -lmcheck is not the way to go.  mcheck
+doesn't do well with multi-threaded programs.
+
+I can get gdb to run on the program by
+* Setting an environment variable
+	export GIMP_PLUGIN_DEBUG=gimpbus
+* Starting gimp
+* Starting gimpbus
+* Getting the PID
+* Starting gdb with
+	gdb gimpbus PID
+* Continuing
+	continue
+
+I can get valgrind to run on the program by
+* Setting some environment variables
+	export GIMP_PLUGIN_DEBUG_WRAP=gimpbus
+	export GIMP_PLUGIN_DEBUG_WRAPPER=valgrind
+* Starting gimp
+* Starting gimpbus
+
+Here's what I observe:
+* It crashes on the 34th GIMP PDB function when no debugger is used.
+* It crashes on the 34th GIMP PDB function with gdb is used.  In this case,
+  I get a malloc error.
+* It does not crash when valgrind is used.  Agh!

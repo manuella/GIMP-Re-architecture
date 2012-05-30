@@ -1,0 +1,2 @@
+export GIMP_PLUGIN_DEBUG_WRAP=gimpbus
+export GIMP_PLUGIN_DEBUG_WRAPPER="valgrind --leak-check=yes"
