@@ -28,8 +28,8 @@ static gboolean oval_dialog (GimpDrawable *drawable);
 // default settings for the frame
 static MyOval vals =
   {
-    11, // xcord (thickness of the frame horizontally)
-    11, // ycord (thickness of the frame vertically)
+    10, // xcord (thickness of the frame horizontally)
+    10, // ycord (thickness of the frame vertically)
     1, //frame design (different channels (mentioned later))
   };
 
@@ -180,7 +180,7 @@ static void modos (GimpDrawable *drawable ,gint image)
   // filling in the various parameters of rect_select which is image, x-cord, y-cord, width, height, Operation, feather, feather_radius
   gimp_rect_select(image, 0, 0, width, height, 0, 0, 0);
   // filling the various parameters of ellipse_select which is image, x-cord, y-cord (in this thickness of the frame), adjusted width and height with regards to thickness, SUBTRACT operation, Making the pic clear, feather, feather-radius
-  gimp_ellipse_select (image, vals.xcord,vals.ycord, width - (2*vals.xcord), height - (2*vals.xcord), 1, TRUE, vals.xcord/4, vals.ycord/8);
+  gimp_ellipse_select (image, vals.xcord,vals.ycord, width - (2*vals.xcord), height - (2*vals.ycord), 1, TRUE, vals.xcord/4, vals.ycord/8);
   //Two parameters: drawable id, and fill type. (0-Foreground, 1-Background, 2-Whitefill, 3-Transparentfill, 4-Patterfill)
   gimp_edit_fill (drawable->drawable_id, vals.framecolor);
 }
@@ -202,9 +202,10 @@ oval_dialog (GimpDrawable *drawable)
   gboolean   run;
 
 
-
+  //This function initializes GTK+ with gtk_init() and initializes GDK's image rendering subsystem (GdkRGB) to follow the GIMP main program's colormap allocation/installation policy. 
   gimp_ui_init ("oval", FALSE);
 
+  //Creates a new GimpDialog widget
   dialog = gimp_dialog_new ("My Oval", "myoval",
 			    NULL, 0,
 			    gimp_standard_help_func, "plug-in-oval",
@@ -214,25 +215,27 @@ oval_dialog (GimpDrawable *drawable)
 
 			    NULL);
 
+  //returns a new gtkvbox
   main_vbox = gtk_vbox_new (FALSE, 6);
-  gtk_container_add (GTK_CONTAINER (GTK_DIALOG (dialog)->vbox), main_vbox);
+  gtk_container_add (GTK_CONTAINER (GTK_DIALOG (dialog)->vbox), main_vbox); //struct to contain widgets
   gtk_widget_show (main_vbox);
 
+  //Creates a new GtkFrame, with optional label label. If label is NULL, the label is omitted. 
   frame = gtk_frame_new (NULL);
   gtk_widget_show (frame);
-  gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0); //Adds widgets to box, packed with reference to the start of box
   gtk_container_set_border_width (GTK_CONTAINER (frame), 6);
 
-  alignment = gtk_alignment_new (0.5, 0.5, 1, 1);
+  alignment = gtk_alignment_new (0.5, 0.5, 1, 1); //params are xalign, yalign, xscale, yscale
   gtk_widget_show (alignment);
   gtk_container_add (GTK_CONTAINER (frame), alignment);
-  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 6, 6, 6, 6);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 6, 6, 6, 6); //Gets the padding on the different sides of the widget.
 
-  main_hbox = gtk_hbox_new (FALSE, 0);
+  main_hbox = gtk_hbox_new (FALSE, 0); //creates a new gtkhbox
   gtk_widget_show (main_hbox);
   gtk_container_add (GTK_CONTAINER (alignment), main_hbox);
 
-  width_label = gtk_label_new_with_mnemonic ("Width/Length:");
+  width_label = gtk_label_new_with_mnemonic ("Xcord/Ycord:"); // Creates a new GtkLabel, containing the text in str. 
   gtk_widget_show (width_label);
   gtk_box_pack_start (GTK_BOX (main_hbox), width_label, FALSE, FALSE, 6);
   gtk_label_set_justify (GTK_LABEL (width_label), GTK_JUSTIFY_RIGHT);
@@ -248,11 +251,11 @@ oval_dialog (GimpDrawable *drawable)
   gtk_frame_set_label_widget (GTK_FRAME (frame), frame_label);
   gtk_label_set_use_markup (GTK_LABEL (frame_label), TRUE);
 
-  g_signal_connect (spinbutton_adj, "value_changed",
+  g_signal_connect (spinbutton_adj, "value_changed",    //Connects a GCallback function to a signal for a particular object. Params are instance, detailed_signal, c_handler, data
                     G_CALLBACK (gimp_int_adjustment_update),
                     &vals.xcord);
 
-  spinbutton_adj = gtk_adjustment_new (10, 0, 100, 1, 5, 5);
+  spinbutton_adj = gtk_adjustment_new (10, 0, 100, 1, 5, 5); //initial value, min value, max value, step increment, page increment, page size 
   spinbutton2 = gtk_spin_button_new (GTK_ADJUSTMENT (spinbutton_adj), 1, 0);
   gtk_widget_show (spinbutton2);
   gtk_box_pack_start (GTK_BOX (main_hbox), spinbutton2, FALSE, FALSE, 6);
@@ -262,7 +265,7 @@ oval_dialog (GimpDrawable *drawable)
 		    G_CALLBACK (gimp_int_adjustment_update),
 		    &vals.ycord);
 
-  spinbutton_adj = gtk_adjustment_new (0, 0, 4, 1, 5, 5);
+  spinbutton_adj = gtk_adjustment_new (0, 0, 4, 1, 5, 5); 
   spinbutton3 = gtk_spin_button_new (GTK_ADJUSTMENT (spinbutton_adj), 1, 0);
   gtk_widget_show (spinbutton3);
   gtk_box_pack_start (GTK_BOX (main_hbox), spinbutton3, FALSE, FALSE, 6);
@@ -277,6 +280,6 @@ oval_dialog (GimpDrawable *drawable)
 
   gtk_widget_destroy (dialog);
 
-  return run;
+  return run; 
 
 }
